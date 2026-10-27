@@ -1,20 +1,22 @@
 name: Windows build
-
 on: [push, pull_request, workflow_dispatch]
-
 permissions:
   contents: read
-
 jobs:
   build:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v7
-
       - name: Build
         shell: powershell
         run: .\build.ps1
-
       - name: Smoke test
         shell: powershell
-        run: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\smoke.ps1
+        run: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\Test-Application.ps1
+
+      - name: Layout and fullscreen
+        shell: powershell
+        run: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\Test-Layout.ps1
+      - name: Slider interaction
+        shell: powershell
+        run: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\Test-Sliders.ps1
