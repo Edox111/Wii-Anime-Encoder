@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $out = Join-Path $PSScriptRoot 'dist\Wii-Anime-Encoder'
-if (-not (Test-Path -LiteralPath (Join-Path $out 'Wii-Anime-Scarlet.exe'))) {
+if (-not (Test-Path -LiteralPath (Join-Path $out 'WiiAnimeEncoder.exe'))) {
     throw 'Run build.ps1 first.'
 }
 $temp = Join-Path ([IO.Path]::GetTempPath()) ('wii-encoder-download-' + [guid]::NewGuid().ToString('N'))
