@@ -26,7 +26,7 @@ Open PowerShell in this repository and run:
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\setup-handbrake.ps1
-.\dist\Wii-Anime-Encoder\Wii-Anime-Scarlet.exe
+.\dist\Wii-Anime-Encoder\WiiAnimeEncoder.exe
 ```
 
 Build creates the app in `dist/Wii-Anime-Encoder`. Setup separately downloads the
@@ -55,17 +55,18 @@ See [the quick guide](README.txt) for troubleshooting, cleanup and settings.
 
 ## Development
 
-- `EncoderApp.cs`: WinForms UI and WPF preview player.
-- `engine.ps1`: naming, subtitle matching and HandBrake process orchestration.
-- `runner.ps1`: isolated conversion entry point.
+- `src/MainForm*.cs`: application lifecycle, layout, rendering and encoding.
+- `src/Controls/`: themed controls; `src/PreviewPlayer.cs`: fullscreen playback.
+- `scripts/Convert-Episodes.ps1`: naming, subtitle matching and HandBrake process orchestration.
+- `scripts/Invoke-EncodingJob.ps1`: isolated conversion entry point.
 - `build.ps1`: local build; no network access.
 - `setup-handbrake.ps1`: explicit, verified dependency download.
-- `tests/smoke.ps1`: first-launch, preferences and default-quality checks.
+- `tests/Test-Application.ps1`: first-launch, preferences and default-quality checks.
 
 Run the smoke test after building:
 
 ```powershell
-powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\smoke.ps1
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\Test-Application.ps1
 ```
 
 GitHub Actions builds and runs this test on Windows. It does not test actual Wii
@@ -102,3 +103,5 @@ HandBrake is obtained separately by each user. Do not upload your locally
 populated `dist/` as a release without reviewing the licenses and corresponding
 source obligations of any bundled third-party components. Use footage and music
 you are authorized to publish in demonstrations.
+
+See [UPGRADING.md](UPGRADING.md) for the renamed files and [OPTIMIZATION-NOTES.md](OPTIMIZATION-NOTES.md) for measurements and validation.

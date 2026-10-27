@@ -3,7 +3,7 @@ Quick guide
 
 GET STARTED
 1. Extract the ZIP and keep the Wii-Anime-Encoder folder together.
-2. Run Wii-Anime-Scarlet.exe from a writable folder on your Windows x64 PC.
+2. Run WiiAnimeEncoder.exe from a writable folder on your Windows x64 PC.
    For source builds, first run build.ps1 and setup-handbrake.ps1 (see README.md).
 3. Choose your Video folder. Subtitle folder defaults to the same location;
    change it if your subtitles are stored elsewhere.
