@@ -1,6 +1,6 @@
 param([switch]$IncludeTheme)
 $ErrorActionPreference = 'Stop'
-$version = '1.0.0-rc.1'
+$version = '1.0.0'
 $buildArguments = @("-NoProfile","-ExecutionPolicy","Bypass","-File",(Join-Path $PSScriptRoot "build.ps1"))
 if (-not $IncludeTheme) { $buildArguments += "-NoTheme" }
 & powershell.exe @buildArguments

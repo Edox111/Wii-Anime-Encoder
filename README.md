@@ -4,7 +4,7 @@ A Windows desktop tool for preparing subtitled anime for Wii media playback.
 
 Choose video, subtitle and output folders, preview a 10-second clip, then encode a batch. The app burns external subtitles into H.264 MP4 files and names each result automatically.
 
-**Status:** 1.0.0-rc.1 release candidate. The owner confirmed Wii playback; compatibility still depends on your player and source material. This is a native Windows app, not a GitHub Pages web app.
+**Status:** 1.0.0. The owner confirmed Wii playback; compatibility still depends on your player and source material. This is a native Windows app, not a GitHub Pages web app.
 
 ## Features
 
@@ -24,7 +24,7 @@ administrator access is required. Setup needs internet to download and verify
 HandBrake; ordinary conversion runs locally afterward.
 
 The compiled package and GitHub's automatic source ZIP serve different purposes.
-The release candidate is prepared privately while Scarlet artwork permission is pending.
+The Scarlet application package includes artwork used with the artist's permission.
 
 ## Build and run
 
@@ -84,13 +84,13 @@ playback or full encoding. Report bugs with Windows version, reproduction steps,
 source format and the visible error. Do not attach copyrighted episodes or
 private folder information.
 
-## Optional personal theme
+## Building with the Scarlet theme
 
 The public source package uses the app's dark fallback background and default
-Windows icon. For a personal build, place `remilia.jpg` and/or `app.ico` in
+Windows icon. For a themed build, place `remilia.jpg` and/or `app.ico` in
 `assets/local/` before building. These files are ignored by Git and are not
-included in the public package. Clear relevant asset permissions before adding
-them to a public repository, screenshots or downloadable release.
+included in the source archive. The compiled Scarlet download includes the theme.
+The artist retains rights to the artwork; it is not covered by the code license.
 
 ## License and credits
 
@@ -107,7 +107,7 @@ Team Shanghai Alice or HandBrake. No anime footage or subtitles are distributed.
 
 Upload this repository's source files to GitHub; omit `dist/`, local assets,
 settings and test media. The included `.gitignore` covers these paths.
-Keep this version marked as a pre-release until the remaining app changes are done.
+Use tag v1.0.0 for this release, targeting the final tested commit on main.
 
 HandBrake is obtained separately by each user. Do not upload your locally
 populated `dist/` as a release without reviewing the licenses and corresponding
@@ -118,7 +118,7 @@ See [UPGRADING.md](UPGRADING.md) for the renamed files and [OPTIMIZATION-NOTES.m
 
 ## Creating a release package
 
-Run package-release.ps1 with Windows PowerShell. For a personal themed build,
+Run package-release.ps1 with Windows PowerShell. For a Scarlet build,
 add -IncludeTheme after placing the assets in assets/local/.
 Packages and SHA-256 files are written to artifacts/.
 

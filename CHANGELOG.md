@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0-rc.1
+## 1.0.0 - 2026-10-27
 
 - Added verified one-click dependency setup and compiled release packaging.
 - Added executable version metadata and release checks.
@@ -15,4 +15,4 @@
 - Prepared public source layout, MIT license, build instructions and Windows CI.
 - Added a separately downloaded, checksum-verified HandBrake dependency.
 - Retained RF 19 default, first-launch empty folders and remembered folder selections.
-- Excluded personal theme assets, media, preferences and build products from source distribution.
+- Excluded theme assets, media, preferences and build products from source distribution.

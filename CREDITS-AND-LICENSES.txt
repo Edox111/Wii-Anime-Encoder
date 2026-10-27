@@ -11,11 +11,10 @@ JAPANESE VERSION
 キャラクター：レミリア・スカーレット (上海アリス幻樂団)
 
 ASSET INFORMATION
+Artwork used with the artist's permission, as confirmed by the project owner.
 The app icon was identified as public domain by its provider.
-The artwork credit and artist group were supplied by the app's owner.
-These credits identify the creators; they do not grant additional rights to
-redistribute their artwork. Artwork redistribution permission has not been
-verified for this package.
+Artwork and character rights remain with their respective rights holders.
+The MIT license for this application does not license the artwork or characters.
 
 LICENSE SCOPE
 -------------
@@ -23,9 +22,9 @@ Original application code, scripts and documentation are licensed under MIT.
 See LICENSE for the complete text. That license does not cover third-party
 artwork, character rights, HandBrake or Windows fonts.
 
-The public source package contains no background artwork or custom icon.
-The credits above describe the optional personal theme. Its assets must not be
-added to a public distribution until their applicable permissions are resolved.
+The Scarlet application download includes its theme artwork. The source
+archive excludes the theme image and icon; optional theme assets belong in
+assets/local/ when building locally.
 Bahnschrift uses the installed Windows font; no font file is distributed.
 
 HANDBRAKE

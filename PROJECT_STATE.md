@@ -1,8 +1,14 @@
-Scarlet release candidate: 1.0.0-rc.1 (unpublished).
-Owner confirmed Wii playback and approved optimized UI and slider fixes.
-Compiled install: extract, run Setup-HandBrake.cmd once, open WiiAnimeEncoder.exe.
-HandBrake is downloaded and hash-verified separately; no encoder is bundled.
-Verified: live download, repeated setup, launcher, failed verification preserves existing encoder, Unicode paths, real preview/cleanup, preferences, layout/fullscreen and sliders.
-Packaging: package-release.ps1 -IncludeTheme (private assets in assets/local).
-Remaining publication steps: artwork permission/credit terms, final workflow run, final 1.0.0 metadata/package, owner publication approval.
+# Current state
+
+Scarlet v1.0.0 final packages prepared; remote publication is not yet verified.
+Owner confirmed Wii playback, installation, optimized UI and slider fixes.
+Owner confirmed artwork permission with no additional attribution requirements.
+
+Compiled setup: extract, run Setup-HandBrake.cmd once, open WiiAnimeEncoder.exe.
+HandBrake is downloaded and hash-verified separately; it is not bundled.
+Source archive excludes theme assets; the Scarlet runtime package includes them.
+The previous release candidate passed local checks and the owner's GitHub workflow.
+
+Next: upload final source, pass Actions, ensure tag v1.0.0 targets the final commit,
+attach the compiled ZIP and checksum, and publish the release.
 Halloween remains a future edition.

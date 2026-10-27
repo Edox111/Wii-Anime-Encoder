@@ -1,14 +1,15 @@
-# Release candidate checklist
+# Publishing Scarlet v1.0.0
 
-Completed: compiled application, verified dependency setup, clean extraction, version metadata, Unicode protocol, regression checks, license notices, and explicit package file whitelist. Owner confirmed Wii playback.
+Completed: owner playback/install approval, artwork permission confirmation,
+final version metadata, credits, compiled package and source package.
 
-Before publishing:
+1. Upload the final source archive contents to the existing repository root.
+2. Wait for the new GitHub Actions run to pass.
+3. Ensure tag v1.0.0 points to that final tested commit on main.
+4. Open the saved release draft and use the approved description.
+5. Attach Wii-Anime-Encoder-Scarlet-1.0.0-win-x64.zip and its .sha256 file.
+6. Leave the pre-release checkbox unchecked and mark this as the latest release.
+7. Make the repository public if necessary, then publish the release.
 
-- Receive artwork permission and apply any requested attribution.
-- Pass the updated GitHub workflow on the final source revision.
-- Change 1.0.0-rc.1 to 1.0.0 in AssemblyInfo.cs and package-release.ps1.
-- Rebuild and regenerate the SHA-256 checksum.
-- Attach the compiled ZIP and checksum to the release draft.
-- Publish only when the owner requests it.
-
-The automatic GitHub source ZIP is not the compiled application. Use the ZIP generated in artifacts/ as the application download.
+GitHub's automatic source download does not contain the compiled application.
+Retain the artist's permission privately with the project's records.
