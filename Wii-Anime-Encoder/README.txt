@@ -1,0 +1,63 @@
+﻿WII ANIME ENCODER | SCARLET EDITION
+Quick guide
+
+GET STARTED
+1. Extract the ZIP and keep the Wii-Anime-Encoder folder together.
+2. Run Wii-Anime-Scarlet.exe from a writable folder on your Windows x64 PC.
+   For source builds, first run build.ps1 and setup-handbrake.ps1 (see README.md).
+3. Choose your Video folder. Subtitle folder defaults to the same location;
+   change it if your subtitles are stored elsewhere.
+4. Choose a separate Completed videos folder.
+5. Leave RF quality at 19 and Audio track at 1 unless you need other settings.
+6. Click Preview to check an episode, or Start encoding to convert the batch.
+
+PREPARE YOUR EPISODES
+Keep videos directly in the chosen folder (subfolders are not scanned).
+Each episode needs one matching external .ssa, .ass or .srt subtitle:
+  Example Show - Ep01.mkv
+  Example Show - Ep01.ass
+Use clear episode numbers. Missing or ambiguous subtitle matches are skipped.
+Subtitles may also be in direct Subs or Subtitles subfolders.
+Subtitles are burned into the picture and cannot be turned off afterward.
+
+SETTINGS AND FILENAMES
+RF quality: 18-22 in 0.5 steps; default 19. Lower values mean higher quality/larger files.
+Audio track: 1-8. Select a source track that exists in every episode.
+Anime title: optional; overrides the automatically detected series name.
+The filename preview updates automatically:
+  Example Show - Ep01 - <resolution>.mp4
+Actual resolution is confirmed after encoding. Output is H.264 MP4, up to
+640x480 and 30 fps, with preserved aspect ratio and AAC stereo audio.
+Existing output files are never overwritten.
+
+PREVIEW AND RESULTS
+Preview: choose an episode to convert and play its first 10 seconds fullscreen.
+  Escape closes the preview; Space pauses/resumes; R replays.
+  The temporary clip is deleted when you close it.
+Start encoding: processes all eligible episodes. Progress appears when encoding
+starts and shows the current episode's percentage.
+Stop: cancels the run.
+Open output: opens one completed video, or offers a chooser for several.
+  This list covers the current app session; saved videos remain after exit.
+F11 toggles the app's fullscreen mode; Escape exits fullscreen.
+
+IF SOMETHING GOES WRONG
+No eligible episodes: check episode numbers and matching subtitle filenames.
+No audio: check that the selected audio track exists in the source.
+Missing encoder: extract the whole ZIP, including HandBrakeCLI.exe.
+Output already exists: rename/move the old file or choose another output folder.
+Temporary-file error: move the app to a writable folder with enough free space.
+Preview unavailable on Windows N: the Media Feature Pack may be needed.
+
+FILES AND CREDITS
+Videos are processed locally; this app has no telemetry or automatic updater.
+Folder fields start empty for new users and are remembered after normal exit.
+Updates retain saved folders for the same Windows account.
+Folder preferences: %LOCALAPPDATA%\WiiAnimeEncoder\settings.json
+No persistent conversion logs or .completed files are created.
+Temporary .work-... folders beside the app are normally removed automatically.
+After a crash, remove leftover temporary folders only when the app and encoder
+are closed. Keep backups of your original files.
+
+See CREDITS-AND-LICENSES.txt for English/Japanese credits, asset information,
+distribution notes, and the complete HandBrake license notices.
