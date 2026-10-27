@@ -24,3 +24,5 @@ continue to use the same Windows user settings file.
 The renamed runtime scripts must stay beside the new executable:
 Convert-Episodes.ps1 and Invoke-EncodingJob.ps1. Do not mix executable and script
 files from different versions. Extract a review package into its own folder.
+
+Release candidate additions: upload distribution/, package-release.ps1, src/Properties/ and the installer/protocol tests along with all other source changes. The compiled app ZIP is a release attachment, not repository source.

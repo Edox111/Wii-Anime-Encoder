@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 1.0.0-rc.1
+
+- Added verified one-click dependency setup and compiled release packaging.
+- Added executable version metadata and release checks.
+- Fixed UTF-8 handling for accented paths and non-ASCII titles.
 
 - Fixed slider focus decoration and clipping of selected RF/audio values.
 

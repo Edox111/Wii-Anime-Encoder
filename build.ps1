@@ -1,6 +1,9 @@
+param([switch]$NoTheme)
 $ErrorActionPreference = 'Stop'
 if ($PSVersionTable.PSEdition -ne 'Desktop') {
-    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath
+    $arguments = @("-NoProfile","-ExecutionPolicy","Bypass","-File",$PSCommandPath)
+    if ($NoTheme) { $arguments += "-NoTheme" }
+    & powershell.exe @arguments
     exit $LASTEXITCODE
 }
 $out = Join-Path $PSScriptRoot 'dist\Wii-Anime-Encoder'
@@ -12,9 +15,9 @@ $refs = @('System.dll','System.Core.dll','System.Windows.Forms.dll','System.Draw
 $cp = New-Object CodeDom.Compiler.CompilerParameters
 $cp.GenerateExecutable = $true
 $cp.OutputAssembly = $exe
-$cp.CompilerOptions = '/target:winexe'
+$cp.CompilerOptions = '/target:winexe /platform:x64 /optimize+'
 $icon = Join-Path $PSScriptRoot 'assets\local\app.ico'
-if (Test-Path -LiteralPath $icon) { $cp.CompilerOptions += ' /win32icon:"' + $icon + '"' }
+if (-not $NoTheme -and (Test-Path -LiteralPath $icon)) { $cp.CompilerOptions += ' /win32icon:"' + $icon + '"' }
 foreach ($ref in $refs) { $null = $cp.ReferencedAssemblies.Add($ref) }
 $sources = @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'src') -Filter *.cs -Recurse | Sort-Object FullName | Select-Object -ExpandProperty FullName)
 Add-Type -Path $sources -CompilerParameters $cp
@@ -23,8 +26,10 @@ foreach ($name in @('README.txt','LICENSE','CREDITS-AND-LICENSES.txt')) {
 }
 $art = Join-Path $PSScriptRoot 'assets\local\remilia.jpg'
 $targetArt = Join-Path $out 'remilia.jpg'
-if (Test-Path -LiteralPath $art) { Copy-Item -LiteralPath $art -Destination $targetArt -Force }
+if (-not $NoTheme -and (Test-Path -LiteralPath $art)) { Copy-Item -LiteralPath $art -Destination $targetArt -Force }
 elseif (Test-Path -LiteralPath $targetArt) { Remove-Item -LiteralPath $targetArt }
 Write-Host "Built: $exe"
 
 Copy-Item -Path (Join-Path $PSScriptRoot 'scripts\*.ps1') -Destination $out -Force
+
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot "distribution\Setup-HandBrake.cmd") -Destination $out -Force

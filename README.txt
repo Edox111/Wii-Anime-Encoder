@@ -2,14 +2,20 @@
 Quick guide
 
 GET STARTED
-1. Extract the ZIP and keep the Wii-Anime-Encoder folder together.
-2. Run WiiAnimeEncoder.exe from a writable folder on your Windows x64 PC.
-   For source builds, first run build.ps1 and setup-handbrake.ps1 (see README.md).
-3. Choose your Video folder. Subtitle folder defaults to the same location;
-   change it if your subtitles are stored elsewhere.
-4. Choose a separate Completed videos folder.
-5. Leave RF quality at 19 and Audio track at 1 unless you need other settings.
-6. Click Preview to check an episode, or Start encoding to convert the batch.
+1. Extract the entire ZIP into a writable folder on your Windows x64 PC.
+2. Double-click Setup-HandBrake.cmd once. It downloads and verifies the official
+   HandBrakeCLI 1.9.2 encoder. Internet is needed only for this setup step.
+3. After setup succeeds, open WiiAnimeEncoder.exe.
+4. Choose Video folder, Subtitle folder and a separate Completed videos folder.
+   Subtitle folder initially follows your video selection.
+5. Keep RF quality at 19 and Audio track at 1, or adjust them for your files.
+6. Click Preview to test an episode, or Start encoding to process the batch.
+
+No compilation or administrator access is required for this compiled package.
+Keep all extracted files together. Do not run the app from inside the ZIP.
+Requirements: Windows x64, .NET Framework 4.8 and Windows PowerShell 5.1.
+Windows N may need the Media Feature Pack for preview playback.
+For source builds, follow README.md in the source repository.
 
 PREPARE YOUR EPISODES
 Keep videos directly in the chosen folder (subfolders are not scanned).
@@ -44,7 +50,7 @@ F11 toggles the app's fullscreen mode; Escape exits fullscreen.
 IF SOMETHING GOES WRONG
 No eligible episodes: check episode numbers and matching subtitle filenames.
 No audio: check that the selected audio track exists in the source.
-Missing encoder: extract the whole ZIP, including HandBrakeCLI.exe.
+Missing encoder: run Setup-HandBrake.cmd and wait for verification to finish.
 Output already exists: rename/move the old file or choose another output folder.
 Temporary-file error: move the app to a writable folder with enough free space.
 Preview unavailable on Windows N: the Media Feature Pack may be needed.

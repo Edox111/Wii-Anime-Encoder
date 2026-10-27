@@ -125,7 +125,9 @@ namespace WiiAnimeEncoder
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     RedirectStandardOutput = true,
-                    RedirectStandardError = true
+                    RedirectStandardError = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = System.Text.Encoding.UTF8
                 }
             };
         }
@@ -240,7 +242,7 @@ namespace WiiAnimeEncoder
         {
             timer.Start();
             if (!File.Exists(Path.Combine(root, "HandBrakeCLI.exe")))
-                throw new Exception("HandBrakeCLI.exe is missing. Run setup-handbrake.ps1 or restore the encoder beside the app.");
+                throw new Exception("HandBrakeCLI.exe is missing. Run Setup-HandBrake.cmd once, then try again.");
             activeWork = Path.Combine(root, ".work-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(activeWork);
             previewRun = clip;

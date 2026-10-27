@@ -4,7 +4,7 @@ A Windows desktop tool for preparing subtitled anime for Wii media playback.
 
 Choose video, subtitle and output folders, preview a 10-second clip, then encode a batch. The app burns external subtitles into H.264 MP4 files and names each result automatically.
 
-**Status:** pre-release. Tested locally on Windows; playback compatibility depends on your Wii player and source material. This is a native Windows app, not a GitHub Pages web app.
+**Status:** 1.0.0-rc.1 release candidate. The owner confirmed Wii playback; compatibility still depends on your player and source material. This is a native Windows app, not a GitHub Pages web app.
 
 ## Features
 
@@ -15,6 +15,16 @@ Choose video, subtitle and output folders, preview a 10-second clip, then encode
 - Fullscreen 10-second preview and per-episode progress.
 - Empty folders on a new user's first launch; saved folders on later launches.
 - Local processing with no telemetry or automatic updater.
+
+## Compiled application
+
+Extract the compiled ZIP into a writable folder. Double-click
+Setup-HandBrake.cmd once, then open WiiAnimeEncoder.exe. No compilation or
+administrator access is required. Setup needs internet to download and verify
+HandBrake; ordinary conversion runs locally afterward.
+
+The compiled package and GitHub's automatic source ZIP serve different purposes.
+The release candidate is prepared privately while Scarlet artwork permission is pending.
 
 ## Build and run
 
@@ -105,3 +115,13 @@ source obligations of any bundled third-party components. Use footage and music
 you are authorized to publish in demonstrations.
 
 See [UPGRADING.md](UPGRADING.md) for the renamed files and [OPTIMIZATION-NOTES.md](OPTIMIZATION-NOTES.md) for measurements and validation.
+
+## Creating a release package
+
+Run package-release.ps1 with Windows PowerShell. For a personal themed build,
+add -IncludeTheme after placing the assets in assets/local/.
+Packages and SHA-256 files are written to artifacts/.
+
+The packager excludes HandBrake binaries even if installed locally, plus preferences
+and test media. Users obtain HandBrake through the included setup launcher.
+See RELEASE-CHECKLIST.md for the remaining publication steps.
