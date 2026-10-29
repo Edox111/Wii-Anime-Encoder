@@ -1,30 +1,12 @@
-﻿WII ANIME ENCODER | SCARLET EDITION - CREDITS AND LICENSES
-
-ENGLISH VERSION
-This app is a derivative work based on the "Touhou Project" series by Team Shanghai Alice (ZUN). It is an unofficial fan creation and is not affiliated with or endorsed by Team Shanghai Alice.
-Character: Remilia Scarlet belongs to Team Shanghai Alice.
-Artwork by: UGUME (うぐめ)
-Artist group: Metal Luck
-
-JAPANESE VERSION
-本アプリは「上海アリス幻樂団」様の著作物である「東方Project」の二次創作作品です。
-キャラクター：レミリア・スカーレット (上海アリス幻樂団)
-
-ASSET INFORMATION
-Artwork used with the artist's permission, as confirmed by the project owner.
-The app icon was identified as public domain by its provider.
-Artwork and character rights remain with their respective rights holders.
-The MIT license for this application does not license the artwork or characters.
+WII ANIME ENCODER - CREDITS AND LICENSES
 
 LICENSE SCOPE
 -------------
 Original application code, scripts and documentation are licensed under MIT.
 See LICENSE for the complete text. That license does not cover third-party
-artwork, character rights, HandBrake or Windows fonts.
+photographs, HandBrake or Windows fonts.
 
-The Scarlet application download includes its theme artwork. The source
-archive excludes the theme image and icon; optional theme assets belong in
-assets/local/ when building locally.
+Photo themes use the Unsplash License. See themes/CREDITS.txt for sources and authors.
 Bahnschrift uses the installed Windows font; no font file is distributed.
 
 HANDBRAKE
@@ -422,3 +404,6 @@ proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.
+
+THEME PHOTOGRAPHS
+See themes/CREDITS.txt (source: assets/themes/CREDITS.txt) for photographers, individual source pages, and the Unsplash License. Theme photographs are separate from the MIT code license.

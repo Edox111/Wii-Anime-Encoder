@@ -1,0 +1,7 @@
+/dist/
+/artifacts/
+/assets/local/
+/tests/*settings.json
+/tests/prefs-qa-*/
+/tests/qa-*/
+*.user

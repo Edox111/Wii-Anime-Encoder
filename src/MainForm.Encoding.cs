@@ -20,7 +20,7 @@ namespace WiiAnimeEncoder
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(prefs));
-                File.WriteAllText(prefs, serializer.Serialize(new Dictionary<string, object> { { "Video", video.Text }, { "Subtitle", subtitle.Text }, { "Output", output.Text } }));
+                File.WriteAllText(prefs, serializer.Serialize(new Dictionary<string, object> { { "Video", video.Text }, { "Subtitle", subtitle.Text }, { "Output", output.Text }, { "Theme", theme.Name } }));
             }
             catch
             {
@@ -35,6 +35,8 @@ namespace WiiAnimeEncoder
                 subtitle.Text = d["Subtitle"];
                 video.Text = d["Video"];
                 output.Text = d["Output"];
+                string savedTheme;
+                if (d.TryGetValue("Theme", out savedTheme)) themePicker.SelectedItem = AppTheme.Find(savedTheme);
             }
             catch
             {
@@ -44,6 +46,9 @@ namespace WiiAnimeEncoder
         List<string> convertedFiles = new List<string>();
         string selectedFile = "", activeWork = "", previewPath = "";
         bool previewRun, cancelled, closeWhenFinished;
+        bool pauseRequested, paused;
+        Button cancelButton;
+        string runningStatus = "";
         int nameGeneration = 0;
         DateTime nameDue = DateTime.MaxValue;
         Process nameWorker;
@@ -250,6 +255,9 @@ namespace WiiAnimeEncoder
             lastError = "";
             skipped = 0;
             cancelled = false;
+            pauseRequested = paused = false;
+            runningStatus = "";
+            stop.Text = "Pause";
             percent.Visible = true;
             percent.Text = "0.0%";
             status.Text = clip ? "Preparing 10-second preview..." : "Preparing conversion...";
@@ -289,6 +297,7 @@ namespace WiiAnimeEncoder
             start.Enabled = false;
             preview.Enabled = false;
             stop.Enabled = true;
+            cancelButton.Enabled = true;
         }
 
         void CleanWork()
@@ -361,10 +370,25 @@ namespace WiiAnimeEncoder
                     if (type == "JOB")
                     {
                         var job = (Dictionary<string, object>)data;
-                        status.Text = (previewRun ? "Preview" : "Episode") + " " + job["Index"] + "/" + job["Total"] + " - " + job["Name"];
+                        runningStatus = (previewRun ? "Preview" : "Episode") + " " + job["Index"] + "/" + job["Total"] + " - " + job["Name"];
+                        status.Text = pauseRequested ? "Pausing..." : runningStatus;
                         pendingPercent = "0.0%";
                     }
 
+                    if (type == "PAUSED" && !cancelled)
+                    {
+                        paused = true;
+                        stop.Text = "Resume";
+                        stop.Enabled = true;
+                        status.Text = String.IsNullOrEmpty(runningStatus) ? "Paused before the next episode." : "Paused - " + runningStatus;
+                    }
+                    if (type == "RESUMED" && !cancelled)
+                    {
+                        paused = false;
+                        stop.Text = "Pause";
+                        stop.Enabled = true;
+                        status.Text = runningStatus;
+                    }
                     if (type == "ERROR")
                         lastError = Convert.ToString(data);
                     if (type == "SKIP")
@@ -388,7 +412,7 @@ namespace WiiAnimeEncoder
                 }
             }
 
-            if (pendingPercent != null && percent.Text != pendingPercent)
+            if (!cancelled && !paused && pendingPercent != null && percent.Text != pendingPercent)
                 percent.Text = pendingPercent;
             // EOF callbacks guarantee the redirected pipes are drained, without blocking the UI.
             if (worker != null && worker.HasExited && outputClosed && errorClosed && messages.IsEmpty)
@@ -399,8 +423,14 @@ namespace WiiAnimeEncoder
                 start.Enabled = true;
                 preview.Enabled = true;
                 stop.Enabled = false;
+                cancelButton.Enabled = false;
+                pauseRequested = paused = false;
+                stop.Text = "Pause";
                 if (cancelled)
+                {
+                    percent.Text = "0.0%";
                     status.Text = "Cancelled.";
+                }
                 else if (exit != 0)
                 {
                     status.Text = "Conversion failed.";
@@ -470,7 +500,7 @@ namespace WiiAnimeEncoder
                     Size = new Size(740, 420),
                     MinimumSize = new Size(480, 300),
                     StartPosition = FormStartPosition.CenterParent,
-                    BackColor = Color.FromArgb(196, 48, 65)
+                    BackColor = theme.Surface
                 }
 
                 )
@@ -478,7 +508,7 @@ namespace WiiAnimeEncoder
                     var list = new ListBox
                     {
                         Dock = DockStyle.Fill,
-                        BackColor = Color.FromArgb(196, 48, 65),
+                        BackColor = theme.Surface,
                         ForeColor = Color.White,
                         Font = new Font("Bahnschrift", 11),
                         HorizontalScrollbar = true,
@@ -504,6 +534,7 @@ namespace WiiAnimeEncoder
                         Size = new Size(100, 36),
                         DialogResult = DialogResult.Cancel
                     };
+                    open.Accent = theme.Accent; cancel.Accent = theme.Accent; open.BackColor = theme.Surface; cancel.BackColor = theme.Surface;
                     row.Controls.Add(open);
                     row.Controls.Add(cancel);
                     dialog.Controls.Add(list);
@@ -534,28 +565,38 @@ namespace WiiAnimeEncoder
             }
         }
 
+        void TogglePause()
+        {
+            if (worker == null || worker.HasExited || cancelled) return;
+            try
+            {
+                string request = Path.Combine(activeWork, "pause.request");
+                if (pauseRequested) File.Delete(request);
+                else File.WriteAllText(request, "pause");
+                pauseRequested = !pauseRequested;
+                stop.Text = pauseRequested ? "Pausing..." : "Resuming...";
+                stop.Enabled = false;
+                status.Text = pauseRequested ? "Pausing..." : "Resuming...";
+            }
+            catch (Exception ex) { MessageBox.Show(this, ex.Message, "Could not change pause state"); }
+        }
+
+        void ConfirmCancel()
+        {
+            if (worker == null || worker.HasExited) return;
+            if (MessageBox.Show(this, "Cancel this batch? The unfinished episode will be discarded. Completed videos are kept.", "Cancel encoding", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                StopWorker();
+        }
+
         void StopWorker()
         {
-            if (worker == null || worker.HasExited || cancelled)
-                return;
+            if (worker == null || worker.HasExited || cancelled) return;
+            try { File.WriteAllText(Path.Combine(activeWork, "cancel.request"), "cancel"); }
+            catch (Exception ex) { closeWhenFinished = false; MessageBox.Show(this, ex.Message, "Could not cancel"); return; }
             cancelled = true;
-            int processId = worker.Id;
+            percent.Text = "0.0%";
+            stop.Enabled = cancelButton.Enabled = false;
             status.Text = "Cancelling...";
-            System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
-            {
-                try
-                {
-                    using (var p = Process.Start(new ProcessStartInfo("taskkill.exe", "/PID " + processId + " /T /F") { UseShellExecute = false, CreateNoWindow = true }))
-                    {
-                        if (!p.WaitForExit(10000))
-                            messages.Enqueue("DIAGNOSTIC Cancellation is taking longer than expected.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    messages.Enqueue("DIAGNOSTIC " + ex.Message);
-                }
-            });
         }
     }
 }

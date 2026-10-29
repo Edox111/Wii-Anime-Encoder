@@ -1,0 +1,34 @@
+THEME PHOTOGRAPHY
+Selected 2026-10-29. Photos licensed under the Unsplash License:
+https://unsplash.com/license
+Permits downloading, copying, modifying and distributing images, including
+commercial use. Do not sell unmodified images or compile a competing image service.
+These photographs are not covered by the application's MIT license.
+Images are resized JPEG copies; the app crops to cover and darkens at runtime.
+Crimson adds a red color grade and a soft halo at runtime; source photo unchanged.
+No network request is made when switching themes.
+
+Midnight - starry night - Oshadha Viduranga
+https://unsplash.com/photos/the-night-sky-is-filled-with-stars-and-trees-H3zQl-iYLf8
+Graphite - basalt columns - Adrien Olichon
+https://unsplash.com/photos/hexagonal-basalt-columns-with-water-pools-IuXpGuPErns
+Slate - misty mountains - Caroline Badran
+https://unsplash.com/photos/dark-mountains-shrouded-in-mist-at-dawn-jv0YIBDYfr0
+OLED Black - sparse stars - Neon Sumer
+https://unsplash.com/photos/a-starry-night-sky-K8eWS_abimM
+Nord - northern lights - Lightscape
+https://unsplash.com/photos/northern-lights-over-snow-capped-mountian-LtnPejWDSAY
+Ocean - turquoise water - Ivan Bandura
+https://unsplash.com/photos/blue-ocean-waves-during-daytime-cpCVE_XTTXE
+Forest - evergreen mountains - Kyle Larivee
+https://unsplash.com/photos/misty-mountains-covered-in-dark-evergreen-trees-Sv67jNNMpo0
+Plum - purple garden flowers - Michelle Tresemer
+https://unsplash.com/photos/a-bunch-of-lavender-flowers-in-a-field-AB93UGomB9Q
+Amber - golden desert - Karim MANJRA
+https://unsplash.com/photos/view-of-sand-dunes-during-golden-hour-CfDta2k-15g
+Crimson - blood moon (Gravitation) - Zoltan Tasi
+https://unsplash.com/photos/blood-moon-n8HAQ26GnMc
+Scarlet - castle at night under a red sky - Mick Haupt
+https://unsplash.com/photos/a-castle-lit-up-at-night-with-a-red-sky-OXcmqgIuivc
+
+See the main CREDITS-AND-LICENSES.txt for other component credits.

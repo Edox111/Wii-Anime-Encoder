@@ -15,19 +15,22 @@ $refs = @('System.dll','System.Core.dll','System.Windows.Forms.dll','System.Draw
 $cp = New-Object CodeDom.Compiler.CompilerParameters
 $cp.GenerateExecutable = $true
 $cp.OutputAssembly = $exe
-$cp.CompilerOptions = '/target:winexe /platform:x64 /optimize+'
-$icon = Join-Path $PSScriptRoot 'assets\local\app.ico'
-if (-not $NoTheme -and (Test-Path -LiteralPath $icon)) { $cp.CompilerOptions += ' /win32icon:"' + $icon + '"' }
+$icon = Join-Path $PSScriptRoot 'assets/app.ico'
+$cp.CompilerOptions = '/target:winexe /platform:x64 /optimize+ /win32icon:"' + $icon + '"'
+$null = $cp.EmbeddedResources.Add($icon)
 foreach ($ref in $refs) { $null = $cp.ReferencedAssemblies.Add($ref) }
 $sources = @(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'src') -Filter *.cs -Recurse | Sort-Object FullName | Select-Object -ExpandProperty FullName)
 Add-Type -Path $sources -CompilerParameters $cp
 foreach ($name in @('README.txt','LICENSE','CREDITS-AND-LICENSES.txt')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination $out -Force
 }
-$art = Join-Path $PSScriptRoot 'assets\local\remilia.jpg'
-$targetArt = Join-Path $out 'remilia.jpg'
-if (-not $NoTheme -and (Test-Path -LiteralPath $art)) { Copy-Item -LiteralPath $art -Destination $targetArt -Force }
-elseif (Test-Path -LiteralPath $targetArt) { Remove-Item -LiteralPath $targetArt }
+New-Item -ItemType Directory -Path (Join-Path $out "themes") -Force | Out-Null
+foreach ($photo in Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot "assets/themes") -Filter *.jpg) {
+    $destination = Join-Path $out ("themes/" + $photo.Name)
+    if ($NoTheme) { if (Test-Path -LiteralPath $destination) { Remove-Item -LiteralPath $destination } }
+    else { Copy-Item -LiteralPath $photo.FullName -Destination $destination -Force }
+}
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot "assets/themes/CREDITS.txt") -Destination (Join-Path $out "themes") -Force
 Write-Host "Built: $exe"
 
 Copy-Item -Path (Join-Path $PSScriptRoot 'scripts\*.ps1') -Destination $out -Force

@@ -9,7 +9,8 @@ namespace WiiAnimeEncoder
 {
     public partial class MainForm
     {
-        Image remilia;
+        Image themeArtwork;
+        string loadedArtwork;
         Bitmap backgroundCache;
         bool interactiveResize;
         protected override void OnResizeBegin(EventArgs e)
@@ -82,7 +83,7 @@ namespace WiiAnimeEncoder
             {
                 c.ForeColor = Color.White;
                 if (c is TextBox || c is ComboBox || c is NumericUpDown || c is RichTextBox)
-                    c.BackColor = Color.FromArgb(196, 48, 65);
+                    c.BackColor = theme.Surface;
                 if (c is TextBox)
                     ((TextBox)c).BorderStyle = BorderStyle.FixedSingle;
                 if (c is ComboBox)
@@ -91,33 +92,56 @@ namespace WiiAnimeEncoder
                     ((NumericUpDown)c).BorderStyle = BorderStyle.FixedSingle;
                 if (c is Label || c is CheckBox)
                     c.BackColor = Color.Transparent;
-                if (c is ThemedButton)
-                    c.BackColor = Color.FromArgb(196, 48, 65);
+                if (c is ThemedButton) { c.BackColor = theme.Surface; ((ThemedButton)c).Accent = theme.Accent; ((ThemedButton)c).RichAccent = theme.Name == "Crimson" || theme.Name == "Scarlet"; }
+                if (c is DiscreteSlider) ((DiscreteSlider)c).Accent = theme.Accent;
                 if (c.HasChildren && !(c is NumericUpDown))
                     StyleControls(c);
             }
         }
 
-        void ApplyScarletTheme()
+        AppTheme theme = AppTheme.All[0];
+        ComboBox themePicker;
+        void InitializeThemes()
         {
-            Text = "Wii Anime Encoder | Scarlet Edition";
-            Icon = Icon.ExtractAssociatedIcon(Path.Combine(root, "WiiAnimeEncoder.exe"));
+            Text = "Wii Anime Encoder";
             DoubleBuffered = true;
-            BackColor = Color.FromArgb(15, 10, 18);
-            string art = Path.Combine(root, "remilia.jpg");
-            if (File.Exists(art))
-            {
-                using (var source = Image.FromFile(art))
-                    remilia = new Bitmap(source);
-            }
-
-            StyleControls(this);
-            ((ThemedButton)start).Primary = true;
-            namePreview.ForeColor = Color.FromArgb(255, 102, 112);
-            status.ForeColor = Color.White;
-            status.BackColor = Color.Transparent;
+            ApplyTheme();
         }
 
+        void ApplyTheme()
+        {
+            theme = themePicker.SelectedItem as AppTheme ?? AppTheme.All[0];
+            if (loadedArtwork != theme.ArtworkFile)
+            {
+                if (themeArtwork != null) { themeArtwork.Dispose(); themeArtwork = null; }
+                loadedArtwork = theme.ArtworkFile;
+                string art = Path.Combine(root, loadedArtwork);
+                try { if (File.Exists(art)) using (var source = Image.FromFile(art)) themeArtwork = new Bitmap(source); }
+                catch (IOException) { }
+                catch (ArgumentException) { } // An invalid optional image falls back to the palette.
+                catch (OutOfMemoryException) { } // GDI+ also reports invalid image data this way.
+            }
+            BackColor = theme.Background;
+            StyleControls(this);
+            ((ThemedButton)start).Primary = true;
+            namePreview.ForeColor = theme.Accent;
+            artRail.Width = 0;
+            ClearBackgroundCache();
+            Invalidate(true);
+        }
+
+        void ShowCredits()
+        {
+            string file = Path.Combine(root, "CREDITS-AND-LICENSES.txt");
+            using (var dialog = new Form { Text = "About / Credits", Size = new Size(680, 520), StartPosition = FormStartPosition.CenterParent })
+            {
+                var text = new TextBox { Multiline = true, ReadOnly = true, Dock = DockStyle.Fill, ScrollBars = ScrollBars.Vertical,
+                    BackColor = theme.Surface, ForeColor = Color.White, Font = Font,
+                    Text = "Wii Anime Encoder\r\nTheme: " + theme.Name + "\r\n\r\n" + (File.Exists(Path.Combine(root, "themes/CREDITS.txt")) ? File.ReadAllText(Path.Combine(root, "themes/CREDITS.txt")) + "\r\n\r\n" : "") + (File.Exists(file) ? File.ReadAllText(file) : "Credits file is missing.") };
+                dialog.Controls.Add(text);
+                dialog.ShowDialog(this);
+            }
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -128,12 +152,18 @@ namespace WiiAnimeEncoder
                     timer.Dispose();
                 }
 
+                if (applicationIcon != null)
+                {
+                    Icon = null;
+                    applicationIcon.Dispose();
+                    applicationIcon = null;
+                }
                 hints.Dispose();
                 ClearBackgroundCache();
-                if (remilia != null)
+                if (themeArtwork != null)
                 {
-                    remilia.Dispose();
-                    remilia = null;
+                    themeArtwork.Dispose();
+                    themeArtwork = null;
                 }
 
                 if (nameWorker != null)
@@ -201,14 +231,42 @@ namespace WiiAnimeEncoder
 
         void RenderBackground(Graphics g)
         {
-            g.Clear(Color.FromArgb(13, 9, 17));
-            if (remilia != null && ClientSize.Width > 0 && ClientSize.Height > 0)
+            g.Clear(theme.Background);
+            if (themeArtwork != null && ClientSize.Width > 0 && ClientSize.Height > 0)
             {
                 // Cover the window without distorting the image's original aspect ratio.
-                float scale = Math.Max((float)ClientSize.Width / remilia.Width, (float)ClientSize.Height / remilia.Height);
-                float w = remilia.Width * scale, h = remilia.Height * scale;
+                float scale = Math.Max((float)ClientSize.Width / themeArtwork.Width, (float)ClientSize.Height / themeArtwork.Height);
+                float w = themeArtwork.Width * scale, h = themeArtwork.Height * scale;
                 g.InterpolationMode = interactiveResize ? InterpolationMode.Bilinear : InterpolationMode.HighQualityBicubic;
-                g.DrawImage(remilia, new RectangleF((ClientSize.Width - w) / 2, (ClientSize.Height - h) / 2, w, h));
+                var target = new RectangleF((ClientSize.Width - w) / 2, (ClientSize.Height - h) / 2, w, h);
+                if (theme.Name == "Crimson")
+                {
+                    using (var attributes = new System.Drawing.Imaging.ImageAttributes())
+                    {
+                        var matrix = new System.Drawing.Imaging.ColorMatrix();
+                        matrix.Matrix11 = 0.48f; matrix.Matrix22 = 0.50f;
+                        attributes.SetColorMatrix(matrix);
+                        g.DrawImage(themeArtwork, Rectangle.Round(target), 0, 0, themeArtwork.Width, themeArtwork.Height, GraphicsUnit.Pixel, attributes);
+                    }
+                    // The halo follows the moon in image coordinates across window sizes.
+                    float radius = h * 0.35f;
+                    float cx = target.X + w * 0.5f, cy = target.Y + h * 0.5f;
+                    using (var halo = new GraphicsPath())
+                    {
+                        halo.AddEllipse(cx - radius, cy - radius, radius * 2, radius * 2);
+                        using (var glow = new PathGradientBrush(halo))
+                        {
+                            glow.CenterPoint = new PointF(cx, cy);
+                            glow.InterpolationColors = new ColorBlend {
+                                Colors = new[] { Color.FromArgb(0, 255, 8, 25), Color.FromArgb(115, 255, 8, 25), Color.FromArgb(20, 255, 8, 25), Color.FromArgb(0, 255, 8, 25) },
+                                Positions = new[] { 0f, 0.30f, 0.48f, 1f }
+                            };
+                            g.FillPath(glow, halo);
+                        }
+                    }
+                }
+                else g.DrawImage(themeArtwork, target);
+                using (var overlay = new SolidBrush(Color.FromArgb(theme.Name == "Crimson" ? 45 : (theme.Name == "Scarlet" ? 85 : (theme.Name == "OLED Black" ? 185 : 145)), theme.Background))) g.FillRectangle(overlay, ClientRectangle);
             }
         }
     }

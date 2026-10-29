@@ -146,6 +146,17 @@ namespace WiiAnimeEncoder
             frame.RowStyles.Add(new RowStyle(SizeType.Absolute, 140));
             frame.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             workspace.Controls.Add(frame);
+            var themeRow = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 44, FlowDirection = FlowDirection.RightToLeft, WrapContents = false, BackColor = Color.Transparent };
+            var credits = Action("Credits", (s, e) => ShowCredits(), 86);
+            themePicker = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 150, Margin = new Padding(8, 4, 8, 0), AccessibleName = "Theme" };
+            themePicker.Sorted = true;
+            themePicker.Items.AddRange(AppTheme.All);
+            themePicker.SelectedItem = AppTheme.Find("Midnight");
+            themePicker.SelectedIndexChanged += (s, e) => { ApplyTheme(); SavePrefs(); };
+            themeRow.Controls.Add(credits);
+            themeRow.Controls.Add(themePicker);
+            themeRow.Controls.Add(Caption("Theme"));
+            workspace.Controls.Add(themeRow);
             var settings = new BackgroundPanel
             {
                 Dock = DockStyle.Fill,
@@ -283,13 +294,16 @@ namespace WiiAnimeEncoder
             preview.Margin = new Padding(0, 0, 10, 8);
             start = Action("Start encoding", (s, e) => Run(false), 160);
             start.Margin = new Padding(0, 0, 10, 8);
-            stop = Action("Stop", (s, e) => StopWorker(), 85);
+            stop = Action("Pause", (s, e) => TogglePause(), 100);
             stop.Enabled = false;
+            hints.SetToolTip(stop, "Pause or resume the current encode. Keep the app open to retain progress.");
             stop.Margin = new Padding(0, 0, 10, 8);
             var open = Action("Open output", (s, e) => OpenOutput(), 140);
             open.Margin = new Padding(0, 0, 0, 8);
             actions.Controls.AddRange(new Control[] { preview, start, stop, open });
-            var exit = Action("Exit", (s, e) => Close(), 85);
+            cancelButton = Action("Cancel", (s, e) => ConfirmCancel(), 85);
+            cancelButton.Enabled = false;
+            var exit = cancelButton;
             exit.Margin = new Padding(10, 0, 0, 8);
             actions.Controls.Add(exit);
             Control[] actionButtons =
@@ -369,7 +383,7 @@ namespace WiiAnimeEncoder
             Resize += (s, e) =>
             {
                 if (artRail != null)
-                    artRail.Width = Math.Max(0, Math.Min(500, ClientSize.Width - 950));
+                    artRail.Width = 0;
                 Invalidate();
             };
             ResumeLayout(true);

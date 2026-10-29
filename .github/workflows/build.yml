@@ -20,3 +20,9 @@ jobs:
       - name: Slider interaction
         shell: powershell
         run: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\Test-Sliders.ps1
+      - name: Theme selection and persistence
+        shell: powershell
+        run: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\Test-Themes.ps1
+      - name: Cancel progress reset
+        shell: powershell
+        run: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\Test-CancelProgress.ps1

@@ -1,10 +1,23 @@
-# Wii Anime Encoder | Scarlet Edition
+# Wii Anime Encoder
+
+This working tree is the unreleased v1.1.0 update, with eleven photo themes and Pause/Resume.
+
+Choose a theme from the top-right dropdown. Midnight is the neutral default;
+eleven photographic themes share the same encoding controls. The choice
+is saved per Windows account. Scarlet uses a castle under a red night sky; Crimson uses a glowing blood moon.
+Use Credits to read the photo and software acknowledgements.
+
+During conversion, **Pause** changes to **Resume** once the worker acknowledges it.
+The current encoder stays alive and continues the same output when resumed.
+Keep the application open: this is not a checkpoint that survives exit or reboot.
+**Cancel** asks for confirmation, discards unfinished work and keeps completed videos.
+Closing the application during a job also asks before cancelling it.
 
 A Windows desktop tool for preparing subtitled anime for Wii media playback.
 
 Choose video, subtitle and output folders, preview a 10-second clip, then encode a batch. The app burns external subtitles into H.264 MP4 files and names each result automatically.
 
-**Status:** 1.0.0. The owner confirmed Wii playback; compatibility still depends on your player and source material. This is a native Windows app, not a GitHub Pages web app.
+**Status:** 1.1.0 development build. The owner confirmed Wii playback; compatibility still depends on your player and source material. This is a native Windows app, not a GitHub Pages web app.
 
 ## Features
 
@@ -24,7 +37,7 @@ administrator access is required. Setup needs internet to download and verify
 HandBrake; ordinary conversion runs locally afterward.
 
 The compiled package and GitHub's automatic source ZIP serve different purposes.
-The Scarlet application package includes artwork used with the artist's permission.
+The application package includes eleven licensed photographic backgrounds.
 
 ## Build and run
 
@@ -84,30 +97,26 @@ playback or full encoding. Report bugs with Windows version, reproduction steps,
 source format and the visible error. Do not attach copyrighted episodes or
 private folder information.
 
-## Building with the Scarlet theme
+## Photo themes
 
-The public source package uses the app's dark fallback background and default
-Windows icon. For a themed build, place `remilia.jpg` and/or `app.ico` in
-`assets/local/` before building. These files are ignored by Git and are not
-included in the source archive. The compiled Scarlet download includes the theme.
-The artist retains rights to the artwork; it is not covered by the code license.
+All eleven backgrounds are included in assets/themes and copied by build.ps1.
+The app uses an embedded transparent yellow-star icon at 16, 32, 48 and 256 px. Source and photographer credits are in
+assets/themes/CREDITS.txt. Build with -NoTheme for palette-only local testing.
 
 ## License and credits
 
 Custom app code, scripts and documentation are offered under the [MIT License](LICENSE).
-Third-party artwork, characters, fonts and HandBrake are outside that license.
+Third-party photographs, fonts and HandBrake are outside that license.
 Read [credits and license scope](CREDITS-AND-LICENSES.txt).
 
-Touhou Project / Remilia Scarlet: Team Shanghai Alice (ZUN).
-Original custom background credit: UGUME (うぐめ), Metal Luck.
-This is an unofficial project with no affiliation or endorsement from Nintendo,
-Team Shanghai Alice or HandBrake. No anime footage or subtitles are distributed.
+This is an independent project with no affiliation or endorsement from Nintendo
+or HandBrake. No anime footage or subtitles are distributed.
 
 ## Publishing
 
 Upload this repository's source files to GitHub; omit `dist/`, local assets,
 settings and test media. The included `.gitignore` covers these paths.
-Use tag v1.0.0 for this release, targeting the final tested commit on main.
+Use a new tag v1.1.0 for this release, targeting the final tested commit on main.
 
 HandBrake is obtained separately by each user. Do not upload your locally
 populated `dist/` as a release without reviewing the licenses and corresponding
@@ -118,10 +127,11 @@ See [UPGRADING.md](UPGRADING.md) for the renamed files and [OPTIMIZATION-NOTES.m
 
 ## Creating a release package
 
-Run package-release.ps1 with Windows PowerShell. For a Scarlet build,
-add -IncludeTheme after placing the assets in assets/local/.
+Run package-release.ps1 with Windows PowerShell. All eleven photo themes are included.
 Packages and SHA-256 files are written to artifacts/.
 
 The packager excludes HandBrake binaries even if installed locally, plus preferences
 and test media. Users obtain HandBrake through the included setup launcher.
 See RELEASE-CHECKLIST.md for the remaining publication steps.
+
+Theme photos load offline and keep the existing controls and button colors. Photo credits and license links are available in Credits and assets/themes/CREDITS.txt. Scarlet uses a nighttime castle photograph. Cancel resets the percentage to zero; completed videos remain available.

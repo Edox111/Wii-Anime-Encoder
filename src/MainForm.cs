@@ -8,6 +8,7 @@ namespace WiiAnimeEncoder
 {
     public partial class MainForm : Form
     {
+        System.Drawing.Icon applicationIcon;
         TextBox video, subtitle, output, title;
         DiscreteSlider quality;
         DiscreteSlider audio;
@@ -26,8 +27,12 @@ namespace WiiAnimeEncoder
         {
             if (preferencesPath != null)
                 prefs = preferencesPath;
+            using (var stream = typeof(MainForm).Assembly.GetManifestResourceStream("app.ico"))
+            using (var icon = new System.Drawing.Icon(stream))
+                applicationIcon = (System.Drawing.Icon)icon.Clone();
+            Icon = applicationIcon;
             BuildInterface();
-            ApplyScarletTheme();
+            InitializeThemes();
             LoadPrefs();
             timer = new System.Windows.Forms.Timer
             {
@@ -40,7 +45,7 @@ namespace WiiAnimeEncoder
             {
                 if (worker != null && !worker.HasExited)
                 {
-                    if (MessageBox.Show(this, "Stop the current encode and close?", "Encoding in progress", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                    if (MessageBox.Show(this, "Cancel the current encode and close? Unfinished work cannot be resumed after closing. Completed videos are kept.", "Encoding in progress", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
                     {
                         e.Cancel = true;
                         return;

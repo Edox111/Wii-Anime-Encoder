@@ -1,4 +1,4 @@
-﻿# Windows PowerShell 5.1 / PowerShell 7. No administrator access needed.
+# Windows PowerShell 5.1 / PowerShell 7. No administrator access needed.
 [CmdletBinding()]
 param(
     [string]$SourceFolder,
@@ -216,8 +216,17 @@ try {
     if(-not (Test-Path -LiteralPath $EncoderPath -PathType Leaf)){throw 'Bundled HandBrakeCLI.exe is missing. Extract the complete app ZIP.'}
     New-Item -ItemType Directory -Path $WorkFolder -Force|Out-Null
     if(-not $PreviewClip){New-Item -ItemType Directory -Path $DestinationFolder -Force|Out-Null}
+    [Reflection.Assembly]::LoadFrom((Join-Path $PSScriptRoot 'WiiAnimeEncoder.exe')) | Out-Null
+    $pauseFile = Join-Path $WorkFolder 'pause.request'
+    $cancelFile = Join-Path $WorkFolder 'cancel.request'
     $failed=0;$done=0;$index=0
     foreach($job in $jobs){
+        if (Test-Path -LiteralPath $pauseFile) {
+            Emit 'PAUSED' 'Queue paused.'
+            while ((Test-Path -LiteralPath $pauseFile) -and -not (Test-Path -LiteralPath $cancelFile)) { Start-Sleep -Milliseconds 100 }
+            Emit 'RESUMED' ''
+        }
+        if (Test-Path -LiteralPath $cancelFile) { Emit 'CANCELLED' ''; return }
         $index++
         Emit 'JOB' @{Name=$job.Video.Name;Index=$index;Total=$jobs.Count}
         $temporary=Join-Path $WorkFolder ('clip-'+[guid]::NewGuid().ToString('N')+'.mp4')
@@ -225,22 +234,49 @@ try {
             $arguments=@(Get-EncodeArguments $job $temporary)
             $arguments+=@('--json','--min-duration','0')
             if($PreviewClip){$arguments+=@('--start-at','seconds:0','--stop-at','seconds:10')}
-            $previousPreference=$ErrorActionPreference
             $tail=New-Object 'Collections.Generic.Queue[string]'
-            $state=''
-            try{
-                $ErrorActionPreference='Continue'
-                & $EncoderPath @arguments 2>&1 | ForEach-Object {
-                    $line=$_.ToString()
-                    if($tail.Count -ge 12){$null=$tail.Dequeue()};$tail.Enqueue($line)
-                    if($line -match '"State"\s*:\s*"([^"]+)"'){$state=$Matches[1]}
-                    if($state -eq 'WORKING' -and $line -match '"Progress"\s*:\s*([\d.]+)'){
-                        $percent=[double]::Parse($Matches[1],[Globalization.CultureInfo]::InvariantCulture)*100
-                        Emit 'PROGRESS' ([Math]::Min(99.9,$percent))
+            $state=''; $ready=$false; $sentPause=$false; $pauseAcknowledged=$false
+            $cancelling=$false; $cancelAt=[DateTime]::MaxValue
+            $session = New-Object WiiAnimeEncoder.EncoderSession($EncoderPath, [string[]]$arguments)
+            try {
+                while ($true) {
+                    $line = $session.ReadLine()
+                    if ($null -ne $line) {
+                        if($tail.Count -ge 12){$null=$tail.Dequeue()};$tail.Enqueue($line)
+                        if ($line -match 'Encoding Paused by user command') {
+                            $pauseAcknowledged=$true
+                            if (-not $cancelling) { Emit 'PAUSED' 'Current episode paused.' }
+                        }
+                        if($line -match '"State"\s*:\s*"([^"]+)"'){
+                            $state=$Matches[1]
+                            if ($state -eq 'WORKING') {
+                                $ready=$true
+                                if (-not $sentPause -and $pauseAcknowledged) { $pauseAcknowledged=$false; Emit 'RESUMED' '' }
+                            }
+                        }
+                        if($state -eq 'WORKING' -and $line -match '"Progress"\s*:\s*([\d.]+)'){
+                            $percent=[double]::Parse($Matches[1],[Globalization.CultureInfo]::InvariantCulture)*100
+                            Emit 'PROGRESS' ([Math]::Min(99.9,$percent))
+                        }
                     }
+                    if ((Test-Path -LiteralPath $cancelFile) -and -not $cancelling) {
+                        $cancelling=$true; $cancelAt=[DateTime]::UtcNow
+                        $session.Send('r'); $session.Send('q')
+                    }
+                    if (-not $cancelling -and $ready -and -not $session.HasExited) {
+                        $wantPause = Test-Path -LiteralPath $pauseFile
+                        if ($wantPause -and -not $sentPause) { $session.Send('p'); $sentPause=$true }
+                        elseif (-not $wantPause -and $sentPause) { $session.Send('r'); $sentPause=$false }
+                    }
+                    if ($null -eq $line) {
+                        if ($session.HasExited -and $session.OutputEnded) { break }
+                        Start-Sleep -Milliseconds 40
+                    }
+                    if ($cancelling -and ([DateTime]::UtcNow-$cancelAt).TotalSeconds -gt 10) { break }
                 }
-                $exitCode=$LASTEXITCODE
-            }finally{$ErrorActionPreference=$previousPreference}
+                if ($cancelling) { Emit 'CANCELLED' ''; return }
+                $exitCode=$session.ExitCode
+            } finally { $session.Dispose() }
             if($exitCode -ne 0 -or -not(Test-Path -LiteralPath $temporary)){throw ("HandBrake failed. "+($tail.ToArray() -join ' '))}
             $resolution=Get-Mp4Size $temporary
             Emit 'NAME' ($job.Label+' - '+$resolution+'.mp4')

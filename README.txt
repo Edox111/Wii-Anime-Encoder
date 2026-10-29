@@ -1,4 +1,4 @@
-﻿WII ANIME ENCODER | SCARLET EDITION
+WII ANIME ENCODER
 Quick guide
 
 GET STARTED
@@ -42,7 +42,15 @@ Preview: choose an episode to convert and play its first 10 seconds fullscreen.
   The temporary clip is deleted when you close it.
 Start encoding: processes all eligible episodes. Progress appears when encoding
 starts and shows the current episode's percentage.
-Stop: cancels the run.
+Pause: keeps the current encoder alive and changes to Resume when acknowledged.
+Resume: continues that same encode. Keep the app open; pause does not survive
+  closing the application, a Windows shutdown, or a crash.
+Cancel: asks before discarding unfinished work. Completed videos are retained.
+Theme: choose from eleven photographic themes in the top-right dropdown.
+  Midnight is the neutral default. The selection is remembered per Windows account.
+  Scarlet shows a castle at night; Crimson shows a glowing blood moon.
+  Credits lists the included photographs and software components.
+  A yellow-star icon identifies the application across all themes.
 Open output: opens one completed video, or offers a chooser for several.
   This list covers the current app session; saved videos remain after exit.
 F11 toggles the app's fullscreen mode; Escape exits fullscreen.
@@ -65,5 +73,7 @@ Temporary .work-... folders beside the app are normally removed automatically.
 After a crash, remove leftover temporary folders only when the app and encoder
 are closed. Keep backups of your original files.
 
-See CREDITS-AND-LICENSES.txt for English/Japanese credits, asset information,
+See CREDITS-AND-LICENSES.txt for software credits, asset information,
 distribution notes, and the complete HandBrake license notices.
+
+Theme photographs load offline. Credits lists photographers and licenses. Cancelling resets progress to zero and keeps completed videos.

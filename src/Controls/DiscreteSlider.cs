@@ -7,6 +7,7 @@ namespace WiiAnimeEncoder
 {
     public class DiscreteSlider : Control
     {
+        public Color Accent = Color.FromArgb(113, 133, 181);
         public int Minimum = 1, Maximum = 8, Divisor = 1;
         readonly Font tickFont = new Font("Bahnschrift", 8);
         int current = 1;
@@ -138,11 +139,11 @@ namespace WiiAnimeEncoder
         {
             var g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            using (var line = new Pen(Color.FromArgb(49, 5, 14), 4))
+            using (var line = new Pen(AppTheme.Mix(Accent, Color.Black, 0.75), 4))
                 g.DrawLine(line, 12, 15, Width - 12, 15);
-            using (var fill = new Pen(Color.FromArgb(190, 13, 43), 4))
+            using (var fill = new Pen(Accent, 4))
                 g.DrawLine(fill, 12, 15, X(Value), 15);
-            using (var tick = new SolidBrush(Color.FromArgb(185, 25, 48)))
+            using (var tick = new SolidBrush(Accent))
             {
                 for (int v = Minimum; v <= Maximum; v++)
                 {
@@ -153,9 +154,9 @@ namespace WiiAnimeEncoder
                 }
             }
 
-            using (var brush = new SolidBrush(Color.FromArgb(219, 24, 51)))
+            using (var brush = new SolidBrush(Accent))
                 g.FillEllipse(brush, X(Value) - 6, 9, 12, 12);
-            using (var pen = new Pen(Color.FromArgb(37, 0, 8), 2))
+            using (var pen = new Pen(AppTheme.Mix(Accent, Color.Black, 0.8), 2))
                 g.DrawEllipse(pen, X(Value) - 6, 9, 12, 12);
             // Indicate keyboard focus on the thumb without boxing in the entire slider.
             if (Focused && ShowFocusCues && !Capture)
